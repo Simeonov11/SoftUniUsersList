@@ -9,6 +9,12 @@ export default {
         return users;
     },
     async create(userData) {
+        const postData = {
+            ...userData,
+            "createdAt": new Date().toISOString(),
+            "updatedAt": new Date().toISOString(),
+        }
+
         const response = await fetch(baseUrl, {
             method: 'POST',
             headers: {
