@@ -1,2 +1,1 @@
-# SoftUniUsersList
-SoftUni Workshop ReactJS – User List
+SoftUni Workshop - User List
