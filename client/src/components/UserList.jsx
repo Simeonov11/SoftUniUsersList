@@ -11,6 +11,7 @@ import UserInfo from "./UserInfo.jsx";
 export default function UserList() {
     const [users, setUsers] = useState([]);
     const [showCreate, setShowCreate] = useState(false);
+    const [userIdInfo, setUserIdInfo] = useState();
 
     useEffect(() => {
         userService.getAll()
@@ -47,6 +48,12 @@ export default function UserList() {
         setShowCreate(false);
     }
 
+    const userInfoClickHandler = (userId) => {
+        console.log(`info: ${userId}`);
+
+        setUserIdInfo(userId);
+    }
+
     return (
         <section className="card users-container">
             {/* Search bar component */}
@@ -54,7 +61,7 @@ export default function UserList() {
 
             {showCreate && <UserCreate onClose={closeCreateUserClickHandler} onSave={saveCreateUserClickHandler}/>}
 
-            {/* <UserInfo /> */}
+            {userIdInfo && <UserInfo userId={userIdInfo}/>}
 
             {/* Table component */}
             <div className="table-wrapper">
@@ -167,7 +174,7 @@ export default function UserList() {
                     </thead>
                     <tbody>
                         {/* Table row component */}
-                        {users.map(user => <UserListItem key={user._id} {...user}/>)}
+                        {users.map(user => <UserListItem key={user._id} {...user} onInfoClick={userInfoClickHandler}/>)}
                     </tbody>
                 </table>
             </div>
