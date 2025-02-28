@@ -6,6 +6,7 @@ import Pagination from "./Pagination.jsx";
 import Search from "./Search.jsx";
 import UserListItem from "./UserListItem.jsx";
 import UserCreate from "./UserCreate.jsx";
+import UserInfo from "./UserInfo.jsx";
 
 export default function UserList() {
     const [users, setUsers] = useState([]);
@@ -52,6 +53,8 @@ export default function UserList() {
             <Search />
 
             {showCreate && <UserCreate onClose={closeCreateUserClickHandler} onSave={saveCreateUserClickHandler}/>}
+
+            {/* <UserInfo /> */}
 
             {/* Table component */}
             <div className="table-wrapper">

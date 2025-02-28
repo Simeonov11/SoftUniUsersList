@@ -20,7 +20,7 @@ export default {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(userData),
+            body: JSON.stringify(postData),
         });
 
         const result = await response.json();
