@@ -9,11 +9,11 @@ export default {
         return users;
     },
     async create(userData) {
-        const postData = {
-            ...userData,
-            "createdAt": new Date().toISOString(),
-            "updatedAt": new Date().toISOString(),
-        }
+        const {country, city, street, streetNumber, postData} = userData;
+
+        postData.address = {country, city, street, streetNumber};
+        postData.createdAt = new Date().toISOString();
+        postData.updatedAt = new Date().toISOString();
 
         const response = await fetch(baseUrl, {
             method: 'POST',
