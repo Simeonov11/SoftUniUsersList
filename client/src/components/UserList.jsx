@@ -13,6 +13,8 @@ export default function UserList() {
     const [users, setUsers] = useState([]);
     const [showCreate, setShowCreate] = useState(false);
     const [userIdInfo, setUserIdInfo] = useState(null);
+    const [userIdDelete, setUserIdDelete] = useState(null);
+    const [userIdEdit, setUserIdEdit] = useState(null);
 
     useEffect(() => {
         userService.getAll()
@@ -27,16 +29,16 @@ export default function UserList() {
 
     const closeCreateUserClickHandler = () => {
         setShowCreate(false);
+        setUserIdEdit(null);
     };
 
-    const [userIdDelete, setUserIdDelete] = useState(null);
 
     const saveCreateUserClickHandler = async (e) => {
         // Stop default refresh behavior
         e.preventDefault();
 
         // Get form data
-        const formData = new FormData(e.target);
+        const formData = new FormData(e.target.parentElement.parentElement);
         const userData = Object.fromEntries(formData);
         //console.log(userData);
 
@@ -49,17 +51,17 @@ export default function UserList() {
 
         // Close modal
         setShowCreate(false);
-    }
+    };
 
     const userInfoClickHandler = (userId) => {
         console.log(`info: ${userId}`);
 
         setUserIdInfo(userId);
-    }
+    };
 
     const userInfoCloseHandler = () => {
         setUserIdInfo(null);
-    }
+    };
 
     const userDeleteClickHandler = (userId) => {
         setUserIdDelete(userId);
@@ -67,7 +69,7 @@ export default function UserList() {
 
     const userDeleteCloseHandler = () => {
         setUserIdDelete(null);
-    }
+    };
 
     const userDeleteHandler = async () => {
         // Delete request to server
@@ -78,7 +80,31 @@ export default function UserList() {
 
         // Close modal
         setUserIdDelete(null);
-    }
+    };
+
+    const userEditClickHandler = (userId) => {
+        setUserIdEdit(userId);
+    };
+
+    const saveEditUserClickHandler = async (e) => {
+        const userId = userIdEdit;
+
+        // Stop submit refresh
+        e.preventDefault();
+
+        // Get form data
+        const formData = new FormData(e.target.parentElement.parentElement);
+        const userData = Object.fromEntries(formData);
+
+        // Update user on server
+        const updatedUser = await userService.update(userId, userData);
+
+        // Update local state
+        setUsers(state => state.map(user => user._id === userId ? updatedUser : user))
+
+        // Close modal
+        setUserIdEdit(null);
+    };
 
     return (
         <section className="card users-container">
@@ -90,6 +116,8 @@ export default function UserList() {
             {userIdInfo && <UserInfo userId={userIdInfo} onClose={userInfoCloseHandler}/>}
 
             {userIdDelete && <UserDelete onClose={userDeleteCloseHandler} onDelete={userDeleteHandler}/>}
+
+            {userIdEdit && <UserCreate userId={userIdEdit} onClose={closeCreateUserClickHandler} onSave={saveCreateUserClickHandler} onEdit={saveEditUserClickHandler}/>}
 
             {/* Table component */}
             <div className="table-wrapper">
@@ -202,7 +230,13 @@ export default function UserList() {
                     </thead>
                     <tbody>
                         {/* Table row component */}
-                        {users.map(user => <UserListItem key={user._id} {...user} onInfoClick={userInfoClickHandler} onDeleteClick={userDeleteClickHandler}/>)}
+                        {users.map(user => <UserListItem 
+                            key={user._id} 
+                            {...user} 
+                            onInfoClick={userInfoClickHandler} 
+                            onDeleteClick={userDeleteClickHandler}
+                            onEditClick={userEditClickHandler}
+                        />)}
                     </tbody>
                 </table>
             </div>
