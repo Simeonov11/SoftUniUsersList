@@ -7,6 +7,7 @@ import Search from "./Search.jsx";
 import UserListItem from "./UserListItem.jsx";
 import UserCreate from "./UserCreate.jsx";
 import UserInfo from "./UserInfo.jsx";
+import UserDelete from "./UserDelete.jsx";
 
 export default function UserList() {
     const [users, setUsers] = useState([]);
@@ -27,6 +28,8 @@ export default function UserList() {
     const closeCreateUserClickHandler = () => {
         setShowCreate(false);
     };
+
+    const [userIdDelete, setUserIdDelete] = useState(null);
 
     const saveCreateUserClickHandler = async (e) => {
         // Stop default refresh behavior
@@ -58,6 +61,25 @@ export default function UserList() {
         setUserIdInfo(null);
     }
 
+    const userDeleteClickHandler = (userId) => {
+        setUserIdDelete(userId);
+    }
+
+    const userDeleteCloseHandler = () => {
+        setUserIdDelete(null);
+    }
+
+    const userDeleteHandler = async () => {
+        // Delete request to server
+        await userService.delete(userIdDelete);
+
+        // Delete from local state
+        setUsers(state => state.filter(user => user._id !== userIdDelete));
+
+        // Close modal
+        setUserIdDelete(null);
+    }
+
     return (
         <section className="card users-container">
             {/* Search bar component */}
@@ -66,6 +88,8 @@ export default function UserList() {
             {showCreate && <UserCreate onClose={closeCreateUserClickHandler} onSave={saveCreateUserClickHandler}/>}
 
             {userIdInfo && <UserInfo userId={userIdInfo} onClose={userInfoCloseHandler}/>}
+
+            {userIdDelete && <UserDelete onClose={userDeleteCloseHandler} onDelete={userDeleteHandler}/>}
 
             {/* Table component */}
             <div className="table-wrapper">
@@ -178,7 +202,7 @@ export default function UserList() {
                     </thead>
                     <tbody>
                         {/* Table row component */}
-                        {users.map(user => <UserListItem key={user._id} {...user} onInfoClick={userInfoClickHandler}/>)}
+                        {users.map(user => <UserListItem key={user._id} {...user} onInfoClick={userInfoClickHandler} onDeleteClick={userDeleteClickHandler}/>)}
                     </tbody>
                 </table>
             </div>
